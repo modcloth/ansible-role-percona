@@ -1,0 +1,22 @@
+---
+
+- name: Percona repo key
+  apt_key: url=http://www.percona.com/downloads/RPM-GPG-KEY-percona state=present
+
+- name: Percona repo
+  apt_repository: repo='deb http://repo.percona.com/apt trusty main' state=present
+
+- name: Percona src repo
+  apt_repository: repo='deb-src http://repo.percona.com/apt trusty main' state=present
+
+- name: apt-update
+  apt: update_cache=yes
+
+- name: install packages
+  action: apt pkg={{ item }} state=installed
+  with_items:
+     - percona-server-client-5.6
+     - percona-server-5.6
+     - percona-toolkit
+     - percona-xtrabackup-21
+

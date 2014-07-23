@@ -1,0 +1,17 @@
+---
+
+- name: determine unique server id
+  mysql_identify: action=identify
+  register: mysql_identify 
+
+- name: determine InnoDB buffer pool size
+  set_fact: innodb_buffer_pool_size={{ ansible_memtotal_mb|int * innodb_buffer_pool_ratio }} 
+  when: innodb_buffer_pool_size is not defined
+
+- name: symlink config on solaris
+  file: dest=/opt/local/etc/my.cnf src=/etc/my.cnf state=link force=yes
+  when: ansible_os_family == "Solaris"
+
+- name: copy templatized mysql configuration
+  template: src=my.cnf.j2 dest=/etc/my.cnf owner=mysql group=mysql mode=0644
+  notify: restart percona

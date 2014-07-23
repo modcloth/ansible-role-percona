@@ -1,0 +1,8 @@
+---
+
+- name: copy backup script
+  template: src=percona_backup.sh.j2 dest=/opt/local/bin/percona_backup.sh mode=755
+
+- name: copy restore script
+  template: src=percona_restore.sh.j2 dest=/opt/local/bin/percona_restore.sh mode=755
+

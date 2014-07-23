@@ -1,0 +1,9 @@
+---
+- include: packages-solaris.yml
+  when: ansible_os_family == "Solaris"
+- include: packages-debian.yml
+  when: ansible_os_family == "Debian"
+- include: configuration.yml
+- include: scripts.yml
+- include: cron.yml
+

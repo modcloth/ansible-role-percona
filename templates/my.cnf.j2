@@ -1,0 +1,104 @@
+# {{ ansible_managed }}
+
+[client]
+port = 3306
+socket = /tmp/mysql.sock
+
+[mysqld]
+user = mysql
+port = 3306
+socket = /tmp/mysql.sock
+bind-address = 0.0.0.0
+
+skip-external-locking
+log_warnings
+skip_name_resolv
+
+basedir = /opt/local
+datadir = /var/mysql
+
+server-id = {{ mysql_identify.server_id }} 
+auto_increment_increment = {{ auto_increment_increment }}
+auto_increment_offset = {{ auto_increment_offset }}
+
+character-set-server = {{ character_set_server }}
+collation-server =  {{ collation_server }}
+
+userstat = {{ userstat }}
+
+# InnoDB settings
+innodb_data_home_dir = /var/mysql
+innodb_log_group_home_dir = /var/mysql
+
+innodb_data_file_path = ibdata1:100M:autoextend
+innodb_buffer_pool_size = {{ innodb_buffer_pool_size|int }}M
+innodb_buffer_pool_instances = {{ innodb_buffer_pool_instances }}
+
+innodb_log_file_size = 400M
+innodb_additional_mem_pool_size = 20M
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = {{ innodb_flush_log_at_trx_commit }}
+innodb_lock_wait_timeout =  {{ innodb_lock_wait_timeout }}
+innodb_file_per_table
+innodb_doublewrite = 0
+innodb_io_capacity = {{ innodb_io_capacity }}
+innodb_read_io_threads = {{ innodb_read_io_threads }}
+innodb_write_io_threads = {{ innodb_write_io_threads }}
+
+table_open_cache = {{ table_open_cache }}
+# use current (5.5) innodb checksum
+innodb_checksum_algorithm=INNODB
+# use current (5.5) binlog checksum
+binlog_checksum=NONE
+# maintain existing timestamp behavior
+explicit_defaults_for_timestamp=FALSE 
+
+table_definition_cache = {{ table_definition_cache }}
+thread_cache_size = 250
+query_cache_type = {{ query_cache_type }}
+query_cache_size = {{ query_cache_size }}
+query_cache_limit = {{ query_cache_limit }}
+query_cache_min_res_unit = {{ query_cache_min_res_unit }}
+tmpdir = {{ tmp_dir }}
+tmp_table_size = {{ tmp_table_size }}
+max_heap_table_size = {{ max_heap_table_size }}
+max_connections = {{ max_connections }}
+max_allowed_packet = {{ max_allowed_packet }}
+slave_max_allowed_packet = {{ slave_max_allowed_packet }}
+connect_timeout = {{ connect_timeout }}
+net_read_timeout =  {{ net_read_timeout }}
+net_write_timeout = {{ net_write_timeout }}
+net_buffer_length = {{ net_buffer_length }}
+read_buffer_size =  {{ read_buffer_size }}
+thread_stack =  {{ thread_stack }}
+transaction-isolation = {{ transaction_isolation }}
+event_scheduler = {{ event_scheduler }}
+group_concat_max_len = {{ group_concat_max_len }}
+slave_type_conversions = {{ slave_type_conversions }}
+
+# Slow query log settings
+slow_query_log = OFF
+slow_query_log_file = /var/log/mysql/slowquery.log
+slow_query_log_timestamp_always = ON
+slow_query_log_timestamp_precision = microsecond
+slow_query_log_use_global_control = all
+long_query_time = 0
+log_slow_filter =
+log_slow_verbosity = microtime,query_plan,innodb
+log-queries-not-using-indexes = OFF
+
+# Replication settings (master to slave)
+max_binlog_size = 1000M
+max-relay-log-size = 1000M
+log-slave-updates
+log-bin = /var/log/mysql/bin.log
+log-error = /var/log/mysql/error.log
+relay-log = /var/log/mysql/relay.log
+expire_logs_days = {{ expire_log_days }}
+binlog_format = "{{ binlog_format }}"
+
+[mysqldump]
+max_allowed_packet = {{ max_allowed_packet }}
+
+[mysql]
+no-auto-rehash

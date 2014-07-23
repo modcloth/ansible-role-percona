@@ -1,0 +1,7 @@
+---
+- name: install percona packages
+  pkgin: name={{ item }} state=present
+  with_items:
+    - percona-server
+    - percona-toolkit
+    - percona56-xtrabackup

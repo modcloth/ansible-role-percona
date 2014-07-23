@@ -1,0 +1,6 @@
+---
+- name: restart percona
+  service: name=percona state=restarted
+
+- name: disable percona
+  service: name=percona state=disabled

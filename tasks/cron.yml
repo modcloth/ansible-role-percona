@@ -1,0 +1,8 @@
+---
+- name: backup cron job
+  cron: name="Percona Backup Job" hour="{{ backup_crontab_hour }}" user="root" job="/opt/local/bin/percona_backup.sh" state=present
+  when: backup_crontab_enabled
+
+- name: backup cron job
+  cron: name="Percona Backup Job" hour="{{ backup_crontab_hour }}" user="root" job="/opt/local/bin/percona_backup.sh" state=absent
+  when: not backup_crontab_enabled
