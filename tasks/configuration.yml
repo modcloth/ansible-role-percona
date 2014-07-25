@@ -1,8 +1,8 @@
 ---
 
 - name: determine unique server id
-  mysql_identify: action=identify
-  register: mysql_identify 
+  mysql_identity: action=identify
+  register: mysql_identity
 
 - name: determine InnoDB buffer pool size
   set_fact: innodb_buffer_pool_size={{ ansible_memtotal_mb|int * innodb_buffer_pool_ratio }} 
