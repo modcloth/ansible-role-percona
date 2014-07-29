@@ -27,13 +27,10 @@ fi
 echo "STOP SLAVE;" | mysql
 
 # Run innobackupex (the xtrabackup wrapper script), saving backup as a tar stream
-/opt/local/bin/innobackupex --slave-info --ibbackup=xtrabackup --stream=tar /tmp | gzip -c > ${BACKUP_DIR}/${HOSTNAME}/${DATE}.gz
+innobackupex --slave-info --ibbackup=xtrabackup --stream=tar /tmp | gzip -c > ${BACKUP_DIR}/${HOSTNAME}/${DATE}.gz
 
 # Enabling slave process
 echo "START SLAVE;" | mysql
-
-# Remove old backups as defined by retention period attribute
-find ${BACKUP_DIR}/${HOSTNAME} -mtime +30 -exec rm -rf {} \;
 
 # Update LATEST_BACKUP file with timestamp of the latest backup
 echo "${DATE}" > ${BACKUP_DIR}/${HOSTNAME}/LATEST_BACKUP

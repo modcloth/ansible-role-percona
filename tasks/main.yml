@@ -1,4 +1,5 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
 - include: packages-solaris.yml
   when: ansible_os_family == "Solaris"
 - include: packages-debian.yml

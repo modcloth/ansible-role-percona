@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define path to binaries used by this script
-PATH="/mysql/bin:/mysql/libexec:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin"
+PATH="/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin"
 
 # Capture backup source via command line argument
 SOURCE=$1
@@ -61,7 +61,7 @@ function extract_new_db {
 # Function to use innobackup to prepare extracted backup, applying any logged changes that may have happened during the backup process.  This function also updates the permissions of the database files to mysql:mysql.
 function prepare_new_db {
   echo "-- Preparing Db backup" `date`
-  /opt/local/bin/innobackupex --apply-log --use-memory=2G --ibbackup=/opt/local/bin/xtrabackup /var/mysql/ > /dev/null 2>&1
+  innobackupex --apply-log --use-memory=2G --ibbackup=xtrabackup /var/mysql/ > /dev/null 2>&1
   echo "-- Changing permissions" `date`
   chown -R mysql:mysql /var/mysql
 }

@@ -9,14 +9,13 @@
 - name: Percona src repo
   apt_repository: repo='deb-src http://repo.percona.com/apt trusty main' state=present
 
-- name: apt-update
-  apt: update_cache=yes
-
 - name: install packages
-  action: apt pkg={{ item }} state=installed
+  action: apt pkg={{ item }} state=installed update_cache=yes
   with_items:
      - percona-server-client-5.6
-     - percona-server-5.6
+     - percona-server-common-5.6
+     - percona-server-server-5.6
      - percona-toolkit
      - percona-xtrabackup-21
-
+  environment:
+     DEBIAN_FRONTEND: noninteractive
