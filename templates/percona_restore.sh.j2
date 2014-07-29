@@ -8,7 +8,7 @@ SOURCE=$1
 
 # Error out if no backup source is defined via command line
 if [ "${SOURCE}" = "" ]; then
-  echo "Please enter a valid source! Example: {{ backup_directory }}"
+  echo "Please enter a valid source! Example: {{ backup_directory }}/09181975.tgz"
   exit 1
 fi
 
@@ -21,7 +21,7 @@ fi
 touch /tmp/db-restore_lock
 
 # Function to disable the Percona service
-function disable_percona {
+function disable_percona_Solaris {
   echo "-- Disabling Percona service" `date`
   svcadm disable percona
   PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
@@ -34,7 +34,7 @@ function disable_percona {
 }
 
 # Function to enable the Percona service
-function enable_percona {
+function enable_percona_Solaris {
   echo "-- Enabling the Percona service" `date`
   svcadm enable percona
   PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
@@ -46,32 +46,40 @@ function enable_percona {
   echo "done"
 }
 
+function enable_percona_Debian {
+   service mysql start
+}
+
+function disable_percona_Debian {
+   service mysql stop
+}
+
 # Function to remove existing database files
 function remove_old_db {
   echo "-- Removing existing database files" `date`
-  rm -rf /var/mysql/*
+  rm -rf {{ datadir }}/*
 }
 
 # Function to extract backup source, important thing to note is the -i switch on the tar command... it is used to ignore zeros put there during the stream process during the backup
 function extract_new_db {
   echo "-- Extracting Db backup" `date`
-  cd /var/mysql/ && tar -xzif ${SOURCE}
+  cd {{ datadir }} && tar -xzif ${SOURCE}
 }
 
 # Function to use innobackup to prepare extracted backup, applying any logged changes that may have happened during the backup process.  This function also updates the permissions of the database files to mysql:mysql.
 function prepare_new_db {
   echo "-- Preparing Db backup" `date`
-  innobackupex --apply-log --use-memory=2G --ibbackup=xtrabackup /var/mysql/ > /dev/null 2>&1
+  innobackupex --apply-log --use-memory=2G --ibbackup=xtrabackup {{ datadir }} > /dev/null 2>&1
   echo "-- Changing permissions" `date`
-  chown -R mysql:mysql /var/mysql
+  chown -R mysql:mysql {{ datadir }}
 }
 
 # Run each of the functions in the proper order: disable, remove, extract, prepare, enable
-disable_percona
+disable_percona_{{ ansible_os_family }}
 remove_old_db
 extract_new_db
 prepare_new_db
-enable_percona
+enable_percona_{{ ansible_os_family }}
 
 # Removing lock file
 rm /tmp/db-restore_lock
