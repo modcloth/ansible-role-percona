@@ -8,7 +8,7 @@
   set_fact: innodb_buffer_pool_size={{ ansible_memtotal_mb|int * innodb_buffer_pool_ratio }} 
   when: innodb_buffer_pool_size is not defined
 
-- name: symlink config on solaris
+- name: symlink config
   file: dest={{ config_symlink }} src=/etc/my.cnf state=link force=yes
 
 - name: copy templatized mysql configuration
