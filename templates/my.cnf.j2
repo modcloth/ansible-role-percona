@@ -1,58 +1,49 @@
 # {{ ansible_managed }}
 
 [client]
-port = 3306
+port = {{ port }}
 socket = {{ socket }}
 
 [mysqld]
-user = mysql
-port = 3306
+user = {{ user }}
+port = {{ port }}
 socket = {{ socket }}
-bind-address = 0.0.0.0
-
-skip-external-locking
-log_warnings
-
+bind-address = {{ bind_address }}
 basedir = {{ basedir }}
 datadir = {{ datadir }}
-
 server-id = {{ mysql_identity.server_id }} 
 auto_increment_increment = {{ auto_increment_increment }}
 auto_increment_offset = {{ auto_increment_offset }}
-
 character-set-server = {{ character_set_server }}
 collation-server =  {{ collation_server }}
-
 userstat = {{ userstat }}
 
 # InnoDB settings
 innodb_data_home_dir = {{ datadir }}
 innodb_log_group_home_dir = {{ datadir }}
-
 innodb_data_file_path = {{ innodb_data_file_path }}
 innodb_buffer_pool_size = {{ innodb_buffer_pool_size|int }}M
 innodb_buffer_pool_instances = {{ innodb_buffer_pool_instances }}
-
-innodb_log_file_size = 400M
-innodb_log_buffer_size = 8M
+innodb_log_file_size = {{ innodb_log_file_size }}
+innodb_log_buffer_size = {{ innodb_log_buffer_size }}
 innodb_flush_log_at_trx_commit = {{ innodb_flush_log_at_trx_commit }}
 innodb_lock_wait_timeout =  {{ innodb_lock_wait_timeout }}
 innodb_file_per_table
-innodb_doublewrite = 0
+innodb_doublewrite = {{ innodb_doublewrite }}
 innodb_io_capacity = {{ innodb_io_capacity }}
 innodb_read_io_threads = {{ innodb_read_io_threads }}
 innodb_write_io_threads = {{ innodb_write_io_threads }}
 
 table_open_cache = {{ table_open_cache }}
 # use current (5.5) innodb checksum
-innodb_checksum_algorithm=INNODB
+innodb_checksum_algorithm = {{ innodb_checksum_algorithm }}
 # use current (5.5) binlog checksum
-binlog_checksum=NONE
+binlog_checksum = {{ binlog_checksum }}
 # maintain existing timestamp behavior
-explicit_defaults_for_timestamp=FALSE 
+explicit_defaults_for_timestamp = {{ explicit_defaults_for_timestamp }}
 
 table_definition_cache = {{ table_definition_cache }}
-thread_cache_size = 250
+thread_cache_size = {{ thread_cache_size }}
 query_cache_type = {{ query_cache_type }}
 query_cache_size = {{ query_cache_size }}
 query_cache_limit = {{ query_cache_limit }}
@@ -75,23 +66,22 @@ group_concat_max_len = {{ group_concat_max_len }}
 slave_type_conversions = {{ slave_type_conversions }}
 
 # Slow query log settings
-slow_query_log = OFF
-slow_query_log_file = /var/log/mysql/slowquery.log
-slow_query_log_timestamp_always = ON
-slow_query_log_timestamp_precision = microsecond
-slow_query_log_use_global_control = all
-long_query_time = 0
-log_slow_filter =
-log_slow_verbosity = microtime,query_plan,innodb
-log-queries-not-using-indexes = OFF
+slow_query_log = {{ slow_query_log }}
+slow_query_log_file = {{ slow_query_log_file }}
+slow_query_log_timestamp_always = {{ slow_query_log_timestamp_always }}
+slow_query_log_timestamp_precision = {{ slow_query_log_timestamp_precision }}
+slow_query_log_use_global_control = {{ slow_query_log_use_global_control }}
+long_query_time = {{ long_query_time }}
+log_slow_verbosity = {{ log_slow_verbosity }}
+log-queries-not-using-indexes = {{ log_queries_not_using_indexes }}
 
 # Replication settings (master to slave)
-max_binlog_size = 1000M
-max-relay-log-size = 1000M
-log-slave-updates
-log-bin = /var/log/mysql/bin.log
-log-error = /var/log/mysql/error.log
-relay-log = /var/log/mysql/relay.log
+max_binlog_size = {{ max_binlog_size }}
+max-relay-log-size = {{ max_relay_log_size }}
+log-slave-updates 
+log-bin = {{ log_bin }}
+log-error = {{ log_error }}
+relay-log = {{ relay_log }}
 expire_logs_days = {{ expire_log_days }}
 binlog_format = "{{ binlog_format }}"
 

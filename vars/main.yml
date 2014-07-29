@@ -1,4 +1,5 @@
 ---
+
 # backup
 backup_crontab_hour: 3
 backup_crontab_minute: 0
@@ -6,46 +7,68 @@ backup_directory: /net/192.168.38.253/vol/joyaa436bac_2fb1_4f20_8647_39ee241c2a7
 backup_crontab_enabled: False
 backup_retention_period: 7
 
-# percona
+# percona 
 auto_increment_increment: 1
 auto_increment_offset: 1
 bind_address: 0.0.0.0
+binlog_checksum: NONE
 binlog_format: 'ROW'
 character_set_server: utf8
 collation_server: utf8_unicode_ci
 connect_timeout: 10
 event_scheduler: 'OFF'
 expire_log_days: 3
+explicit_defaults_for_timestamp: 'FALSE'
 group_concat_max_len: 1024
+# innodb_buffer_pool_size: 1024
 innodb_buffer_pool_instances: 1
 innodb_buffer_pool_ratio: .70
-# innodb_buffer_pool_size: 1024
+innodb_checksum_algorithm: INNODB
+innodb_doublewrite: 0
 innodb_flush_log_at_trx_commit: 1
 innodb_io_capacity: 1000
 innodb_lock_wait_timeout: 5
+innodb_log_buffer_size: 8M
+innodb_log_file_size: 400M
 innodb_read_io_threads: 8
 innodb_write_io_threads: 8
+log_bin: /var/log/mysql/bin.log
+log_error: /var/log/mysql/error.log
 log_queries_not_using_indexes: 'OFF'
+log_queries_not_using_indexes: 'OFF'
+log_slow_verbosity: microtime,query_plan,innodb
+long_query_time: 0
 max_allowed_packet: 32M
+max_binlog_size: 1000M
 max_connections: 8000
 max_heap_table_size: 256M
+max_relay_log_size: 1000M
 net_buffer_length: 16384
 net_read_timeout: 10
 net_write_timeout: 10
+port: 3306
 query_cache_limit: 100K
 query_cache_limit: 4096
 query_cache_min_res_unit: 512
 query_cache_size: 16M
 query_cache_type: 0
 read_buffer_size: 16M
+relay_log: /var/log/mysql/relay.log
 slave_max_allowed_packet: 32M
 slave_type_conversions: ALL_NON_LOSSY
+slow_query_log: 'OFF'
+slow_query_log_file: /var/log/mysql/slowquery.log
+slow_query_log_timestamp_always: ON
+slow_query_log_timestamp_precision: microsecond
+slow_query_log_use_global_control: all
 sync_binlog: 0
 table_definition_cache: 1024
 table_open_cache: 1024
 thread_cache: 256
+thread_cache_size: 250
 thread_stack: 128K
 tmp_dir: /tmp
 tmp_table_size: 16M
 transaction_isolation: REPEATABLE-READ
+user: mysql
 userstat: 'OFF'
