@@ -5,3 +5,4 @@ basedir: /opt/local
 socket: /tmp/mysql.sock
 innodb_data_file_path: ibdata1:100M:autoextend
 percona_service_name: percona
+config_symlink: /opt/local/etc/my.cnf

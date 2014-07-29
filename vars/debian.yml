@@ -5,3 +5,4 @@ basedir: /usr/
 socket: /var/run/mysqld/mysqld.sock
 innodb_data_file_path: ibdata1:10M:autoextend
 percona_service_name: mysql
+config_symlink: /etc/mysql/my.cnf
