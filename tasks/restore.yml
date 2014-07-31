@@ -1,0 +1,15 @@
+---
+# untested and not called from anywhere 
+- name: backup now
+  command: /opt/local/bin/percona_backup.sh "{{ backup_file }}"
+  async: 86400
+  poll: 0
+  when: backup_now 
+  notify: backup complete
+
+- name: restore now
+  command: /opt/local/bin/percona_restore.sh "{{ restore_file }}"
+  async: 86400
+  poll: 0
+  when: restore_now and destructive
+  notify: restore complete

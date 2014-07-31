@@ -1,0 +1,6 @@
+---
+- hosts: all
+  vars:
+    innodb_buffer_pool_size: 32
+  roles:
+  - ansible-role-percona

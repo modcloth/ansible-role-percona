@@ -1,0 +1,15 @@
+galaxy_info:
+  author: "Alex Schlessinger"
+  license: MIT
+  min_ansible_version: 1.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+    - name: SmartOS
+  categories:
+    - database
+    - mysql
+    - percona
+dependencies: []
+version: 0.0.1
