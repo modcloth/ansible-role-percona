@@ -1,7 +1,66 @@
 #!/bin/bash
+# {{ ansible_managed }}
 
-# Define path to binaries used by this script
-PATH="/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin"
+PATH="/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:/bin"
+LOCK="/tmp/.percona_lock"
+DATADIR="{{ datadir }}"
+
+if mkdir "$LOCK"
+then
+     # remove directory when script finishes
+     trap 'rm -rf "$LOCK"' 0
+else
+     echo >&2 "unable to lock $LOCK"
+     exit 0
+fi
+
+# disable the Percona service
+function disable_percona_Solaris {
+  echo "-- Disabling Percona service" `date`
+  svcadm disable -s percona
+  PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
+  if [ "${PERCONA_STATE}" != "disabled" ]; then
+    echo "unable to disable percona service."
+    exit 1
+  fi
+}
+
+# enable the Percona service
+function enable_percona_Solaris {
+  echo "-- Enabling the Percona service" `date`
+  svcadm enable -s percona
+  PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
+  if [ "${PERCONA_STATE}" != "online" ]; then
+    echo "unable to enable percona service."
+    exit 1 
+  fi
+}
+
+function enable_percona_Debian {
+   service mysql start
+   PERCONA_STATE=`pgrep mysqld`
+   if [ "${PERCONA_STATE}" == "" ]; then
+     echo "unable to enable percona service."
+     exit 1
+   fi
+}
+
+function disable_percona_Debian {
+   service mysql stop
+   PERCONA_STATE=`pgrep mysqld`
+   if [ "${PERCONA_STATE}" != "" ]; then
+     echo "unable to disable percona service."
+     exit 1
+   fi
+}
+
+function disable_percona {
+   disable_percona_{{ ansible_os_family }}
+}
+
+function enable_percona {
+   enable_percona_{{ ansible_os_family }}
+}
 
 # Capture backup source via command line argument
 SOURCE=$1
@@ -12,74 +71,23 @@ if [ "${SOURCE}" = "" ]; then
   exit 1
 fi
 
-# Check for lock file
-if [ -f /tmp/db-restore_lock ]; then
-  exit 0
+if [ "${DATADIR}" = "" ]; then
+  echo "\$datadir must be set!"
+  exit 1
 fi
 
-# Creating lock file
-touch /tmp/db-restore_lock
+disable_percona
 
-# Function to disable the Percona service
-function disable_percona_Solaris {
-  echo "-- Disabling Percona service" `date`
-  svcadm disable percona
-  PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
-  while [ "${PERCONA_STATE}" != "disabled" ]; do 
-    echo -n "."
-    sleep 1
-    PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
-  done
-  echo "done"
-}
+echo "-- Removing existing database files" `date`
+rm -rf $DATADIR/*
 
-# Function to enable the Percona service
-function enable_percona_Solaris {
-  echo "-- Enabling the Percona service" `date`
-  svcadm enable percona
-  PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
-  while [ "${PERCONA_STATE}" != "online" ]; do 
-    echo -n "."
-    sleep 1
-    PERCONA_STATE=`svcs -a | grep percona | cut -d" " -f 1`
-  done
-  echo "done"
-}
+echo "-- Extracting Db backup" `date`
+cd $DATADIR && tar -xzif $SOURCE
 
-function enable_percona_Debian {
-   service mysql start
-}
+echo "-- Preparing Db backup" `date`
+innobackupex --apply-log --use-memory=1G $DATADIR 
 
-function disable_percona_Debian {
-   service mysql stop
-}
+echo "-- Changing permissions" `date`
+chown -R mysql:mysql $DATADIR
 
-# Function to remove existing database files
-function remove_old_db {
-  echo "-- Removing existing database files" `date`
-  rm -rf {{ datadir }}/*
-}
-
-# Function to extract backup source, important thing to note is the -i switch on the tar command... it is used to ignore zeros put there during the stream process during the backup
-function extract_new_db {
-  echo "-- Extracting Db backup" `date`
-  cd {{ datadir }} && tar -xzif ${SOURCE}
-}
-
-# Function to use innobackup to prepare extracted backup, applying any logged changes that may have happened during the backup process.  This function also updates the permissions of the database files to mysql:mysql.
-function prepare_new_db {
-  echo "-- Preparing Db backup" `date`
-  innobackupex --apply-log --use-memory=2G --ibbackup=xtrabackup {{ datadir }} > /dev/null 2>&1
-  echo "-- Changing permissions" `date`
-  chown -R mysql:mysql {{ datadir }}
-}
-
-# Run each of the functions in the proper order: disable, remove, extract, prepare, enable
-disable_percona_{{ ansible_os_family }}
-remove_old_db
-extract_new_db
-prepare_new_db
-enable_percona_{{ ansible_os_family }}
-
-# Removing lock file
-rm /tmp/db-restore_lock
+enable_percona
