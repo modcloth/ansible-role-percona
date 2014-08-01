@@ -20,9 +20,9 @@ fi
 BACKUP_FILE=$1
 # if none, uses backup_dir/hostname/data
 if [ "${BACKUP_FILE}" = "" ]; then
-        BACKUP_PATH=$BACKUP_DIR/$HOSTNAME
-        BACKUP_FILE=$BACKUP_PATH/$DATE.gz
-        mkdir -p $BACKUP_PATH
+        BACKUP_PATH=${BACKUP_DIR}/${HOSTNAME}
+        BACKUP_FILE=${BACKUP_PATH}/${DATE}.gz
+        mkdir -p ${BACKUP_PATH}
 fi
 
 # disable slave process
@@ -36,6 +36,6 @@ echo "START SLAVE;" | mysql 2> /dev/null
 
 # to maintain compatibility with prior script, if invoked with no arugment
 # place the date of the latest backup in a file in the backup_path
-if [ "$BACKUP_PATH" = "" ]; then
-        echo "${DATE}" > $BACKUP_PATH/LATEST_BACKUP
+if [ "${BACKUP_PATH}" = "" ]; then
+        echo "${DATE}" > ${BACKUP_PATH}/LATEST_BACKUP
 fi
