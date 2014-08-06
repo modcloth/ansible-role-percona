@@ -36,6 +36,6 @@ echo "START SLAVE;" | mysql 2> /dev/null
 
 # to maintain compatibility with prior script, if invoked with no arugment
 # place the date of the latest backup in a file in the backup_path
-if [ "${BACKUP_PATH}" = "" ]; then
+if [ "${BACKUP_PATH}" != "" ]; then
         echo "${DATE}" > ${BACKUP_PATH}/LATEST_BACKUP
 fi
