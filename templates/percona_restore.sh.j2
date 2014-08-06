@@ -79,15 +79,15 @@ fi
 disable_percona
 
 echo "-- Removing existing database files" `date`
-rm -rf $DATADIR/*
+rm -rf ${DATADIR}/*
 
 echo "-- Extracting Db backup" `date`
-cd $DATADIR && tar -xzif $SOURCE
+cd ${DATADIR} && tar -xzif ${SOURCE}
 
 echo "-- Preparing Db backup" `date`
-innobackupex --apply-log --use-memory=1G $DATADIR 
+innobackupex --apply-log --use-memory=1G ${DATADIR} 
 
 echo "-- Changing permissions" `date`
-chown -R mysql:mysql $DATADIR
+chown -R mysql:mysql ${DATADIR}/
 
 enable_percona
